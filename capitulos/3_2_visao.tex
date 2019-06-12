@@ -1,0 +1,21 @@
+\section{SISTEMA DE VISÃO}\label{vision}
+
+O propósito da visão computacional é coletar dados do jogo em tempo real que tem como fim descrever o ambiente, e, posteriormente, transmití-los da forma mais compacta possível para o algoritmo responsável pela estratégia.
+O processo para a extração dos dados do ambiente é descrito a seguir.
+Primeiramente, uma câmera é fixada perpendicularmente ao campo, a aproximadamente 2 metros de altura, faz uma série de captura de imagens individuais, ou \textit{frames}, e os envia para o computador.
+Para cada \textit{frame} recebido, utiliza-se um algoritmo para o processamento da imagem com base na biblioteca OpenCV \cite{bradski2008learning}.
+Aplicam-se filtros na imagem para obter somente as partes importantes: a bola, as \textit{tags} de cores dos robôs da equipe, e as \textit{tags} da cor que identifica robôs da outra equipe.
+
+Após serem detectadas as etiquetas de cores e a bola, um algoritmo é utilizado para calcular os dados necessários a ser usado como os estados para rede Deep-RL da estratégia, explicada na seção
+\ref{strategy}.
+Essa rede tem objetivo definir a tomada de decisão dos agentes após receber informações sobre o estado atual do jogo.
+Alguns exemplos de dados enviados para a rede são: posição da bola, posição de robôs da equipe e adversários, orientação dos robôs em relação à bola, distância entre bola e gol, distância entre os robôs e a bola, dentre outros. 
+
+O sistema de \textit{tags} de cores a ser utilizado para a detecção dos robôs no campo se dará pelo uso de 2 círculos de 4,5 centímetros de diâmetro cada, posicionados na diagonal.
+Uma das etiquetas, localizada mais próxima à parte de trás do robô, possui a cor azul ou amarela, que serve para identificação do time.
+A outra etiqueta possui uma cor distinta para cada robô, o que possibilita a diferenciação entre os robôs da equipe.
+Através dos círculos, é possível extrair posição e orientação do robô em relação a bola.
+A posição de um robô, por exemplo, é dada pelo ponto médio do vetor que liga o centro dos dois círculos.
+O sistema de \textit{tags} pode ser visto na Figura $T A L$.
+
+Algumas estratégias são utilizadas para reduzir o custo computacional. Por exemplo, após ter a posição de um robô em determinado \textit{frame}, o próximo processamento de detecção ocorrerá apenas em uma pequena parte da imagem, ao invés de percorrê-la por inteiro, deixando o processo mais otimizado.

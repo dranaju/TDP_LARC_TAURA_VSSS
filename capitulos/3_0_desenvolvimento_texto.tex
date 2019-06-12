@@ -1,0 +1,92 @@
+\section{CONSTRUÇÃO DOS ROBÔS}\label{construction}
+%% Bruno S. Castro Autor ==================================
+
+Esta secção será destinada à descrição técnica das principais características do robô, referente às suas composições mecânicas e eletrônicas. Além disso, apresentaremos a justificativa das escolhas e seus respectivos benefícios.
+
+\subsection{Estrutura Externa}
+%% Bruno S. Castro Autor ==================================
+
+Levando em consideração a facilidade de chegar a estrutura desejada, o custo de produção, trabalho manual envolvido e tempo necessário para construção, decidimos utilizar, após vários testes, impressão 3D com filamento ABS, preenchimento XX\%, altura da camada de XX mm, bico de XX mm e as temperaturas de mesa XX ºC e do bico XX ºC. 
+
+O resultado desta decisão pode ser observado na Figura \ref{fig:visometrica} e superou expectativas, pois obtivemos uma estrutura bem leve (aproximadamente XX gramas), porém suficientemente resistente e modular, com a possibilidade de trabalhar separadamente nos compartimentos mecânico ou eletrônico devido a sua divisão interna, a qual aparenta o robô como um H.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{capitulos/imagens/robo_visometrica.png}}
+\caption{Projeto 3D do robô em vista isométrica}
+\label{fig:visometrica}
+\end{figure}
+
+Quando o robô precisar de manutenção, podemos ir diretamente ao compartimento mecânico onde temos acesso aos sistemas de movimentação do servo-robô, ou seja, acesso direto aos motores, rodas e conexões entre eles, tal como a fiação elétrica do robô e a bateria de fácil remoção.
+Já quando houver a necessidade de acesso ao compartimento eletrônico, teremos contato direto com o sistema de controle responsável pela Rede de Comunicação (disponível na subseção \ref{subsec:rede_com}) do robô. 
+
+\subsection{Sistema de Movimentação}\label{subsec:sist_mov}
+%% Bruno S. Castro Autor ==================================
+
+Abaixo descrevemos a composição do nosso Sistema de Movimentação, como pode ser visto na Figura \ref{fig:sist_moviment}, o qual vai ser controlado pela Rede de Comunicação (disponível na subseção \ref{subsec:rede_com}).
+
+\subsubsection{Rodas}
+%% Bruno S. Castro Autor ==================================
+Quanto ao sistema físico de movimentação do robô, estamos utilizando uma roda composta por um pneu feito com borracha de silicone ultra-resistente de dureza 15 Shore-A acoplado a um cubo de roda feito em Alumínio 6351-T6 especificamente para este pneu. Estes podem ser analisados na Figura \ref{fig:roda}.
+
+\subsubsection{Motores}
+%% Bruno S. Castro Autor ==================================
+E para completar nosso sistema de movimentação, usamos dois Micro Motores de 6V com caixa de redução para 600 RPM, os quais tem seu eixo fixado as rodas citadas anteriormente. O motor pode ser analisado na Figura \ref{fig:motor}.
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.25\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{capitulos/imagens/roda_sep.png}
+  \caption{Roda utilizada}
+  \label{fig:roda}
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+  \centering
+  \includegraphics[width=.9\linewidth]{capitulos/imagens/motor.png}
+  \caption{Micro Motor utilizado}
+  \label{fig:motor}
+\end{subfigure}
+\caption{Componentes do Sistema de Movimentação}
+\label{fig:sist_moviment}
+\end{figure}
+
+
+
+\subsection{Rede de Comunicação}\label{subsec:rede_com}
+
+\subsubsection{Módulos Receptores}\label{subsec:recept_models}
+%% Renan M. Chiesa ==================================
+
+Neste quesito a equipe buscou um sistema de comunicação com uma largura de banda considerável, baixa latência e difícil interferência.
+A escolha lógica se afrontou para os módulos de comunicação Xbee\textsuperscript{\textregistered} S2C, os quais se destacam nesses aspectos, porém não possuem um preço adequado para um projeto que não utiliza o envio de dados complexos. 
+Desta maneira, buscando não alcançar o limite de projeto orçado, optamos por módulos de comunicação 2.4GHz genéricos mostrados na Figura \ref{fig:modulo_comunication}, estes não chegaram ao desempenho dos módulos Xbee, porém mostraram-se satisfatórios na ocasião. Este modulo possui taxas de transmissão e recepção entre 250kbps e 2Mbps com alcance de até 100 metros, podendo utilizar até 125 canais contendo seis endereços cada, possibilitando assim a conexão com até outras 6 unidades.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{capitulos/imagens/modulo_comunication.png}}
+\caption{Módulo  NRF24L01}
+\label{fig:modulo_comunication}
+\end{figure}
+
+
+\subsubsection{Base de Transmissão}
+%% Renan M. Chiesa ==================================
+
+Com o objetivo de estabelecer comunicação entre o sistema de processamento(computador) e cada robô, tivemos a necessidade de construir uma base de envio de dados remotos. Esta base é equipada com uma placa de desenvolvimento Arduino Mega e um módulo de comunicação 2.4 GHz idêntico aos inseridos nos robôs. Está placa foi programada para receber os dados do sistema de processamento por meio do protocolo serial USB, convertendo-os para a estrutura de dados a ser enviada. A comunicação é realizada na faixa de frequência de 2.4GHz(Wi-Fi), está configurada de modo a definir a base como mestre, e cada um dos receptores em modo servo, com estes três recebendo comandos remotos.
+
+As mensagens a serem enviadas possuem formato pré-estabelecido pelo modelo do módulo. Serão enviados na mensagem, dados respectivos ao endereço do receptor do robô com que se deseja a comunicação e os dados necessários ao controle do robô. O envio ocorre várias vezes por segundo possibilitando assim um controle preciso. 
+
+
+\subsection{Microcontrolador}
+%% Alisson Autor ==================================
+
+O microcontrolador escolhido pela equipe para controlar os robôs foi o ATmega328P embarcado na placa Arduino Nano. A preferência por este placa foi em decorrência de suas dimensões diminutas que são de 1,8 cm por 4,8 cm, mostrado na Figura \ref{fig:nano}. Possui todas funções básicas encontradas em placas Arduino porém apresentando algumas configurações diferenciadas, como a alimentação sendo realizada por uma entrada mini-USB e um menor número de portas de entrada e saída. As portas de entrada e saída encontradas nele são suficientes para a operação do robô. 
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=\columnwidth]{capitulos/imagens/arduino_nano.png}}
+\caption{Dimensões do Arduino Nano}
+\label{fig:nano}
+\end{figure}
+
+\input{capitulos/3_2_visao.tex}
+
+\input{capitulos/3_3_estrategia.tex}
